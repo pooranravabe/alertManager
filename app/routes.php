@@ -78,5 +78,30 @@ Route::get('logout', [
 ]);
 });
 
-
+//Author:@krrish
+//CreatedAt:24/02/2016
+Route::get('alertManage/addAlertSubs', [
+    'as' => 'alertManage/addAlertSubs',
+    'uses' => 'AlertsubscriptionController@addAlertSubs'
+]);
+Route::post('alertManage/postAlertSubs', [
+    'as' => 'alertManage/postAlertSubs',
+    'uses' => 'AlertsubscriptionController@postAlertSubs'
+]);
+Route::get('alertManage/viewAlertSubs', [
+    'as' => 'alertManage/viewAlertSubs',
+    'uses' => 'AlertsubscriptionController@viewAlertSubs'
+]);
+Route::post('alertManage/deleteAlertSubs', [
+    'as' => 'alertManage/deleteAlertSubs',
+    'uses' => 'AlertsubscriptionController@deleteAlertSubs'
+]);
+Route::post('alertManage/editAlertSubs', [
+    'as' => 'alertManage/editAlertSubs',
+    'uses' => 'AlertsubscriptionController@editAlertSubs'
+]);
+Route::post('alertManage/updateAlertSubs', [
+    'as' => 'alertManage/updateAlertSubs',
+    'uses' => 'AlertsubscriptionController@updateAlertSubs'
+]);
 
