@@ -1,0 +1,72 @@
+/*********grid view*******/
+.grid-date {
+    font-family: open sans,serif;
+    font-size: 13px;
+    margin-left: 27px;
+    margin-top: 22px;
+}
+.grid-btn-publish > button {
+    background-color: #009200;
+    border: medium none;
+    color: #fff;
+    padding: 2px 21px;
+    margin-left: 10px;
+    margin-top: 20px;
+  
+}
+.grid-view {
+    background: none repeat scroll 0 0 #fff;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    height: 295px;
+    margin: 3px 0 0 3px;
+}
+
+.seprator-grid {
+    background: none repeat scroll 0 0 #959595;
+    height: 1px;
+    margin-bottom: 5px;
+    margin-left: 14px;
+    margin-top: 18px;
+    width: 91.4%;
+}
+.grid-img > img {
+    border-radius: 50%;
+    margin-left: 25px;
+}
+.group-wrapper-grid{
+    margin-top: 12px;
+}
+.grid-text p{
+    padding: 28px 0 0 18px;
+    font-family: open sans,sans-serif;
+    font-size: 14px;
+}
+.grid-text{
+     height: 205px;
+}
+.grid-btn-scheduled > button {
+    background-color: #0044B3;
+    border: medium none;
+    color: #fff;
+    margin-left: 10px;
+    margin-top: 20px;
+    padding: 2px 21px;
+}
+.grid-btn-draft > button {
+    background-color: #870083;
+    border: medium none;
+    color: #fff;
+    margin-left: 10px;
+    margin-top: 20px;
+    padding: 2px 35px;
+}
+.list-sidebar-grid-view {
+    background: none repeat scroll 0 0 #fff;
+    height: 652px;
+    margin-top: 3px;
+    padding: 20px 25px;
+}
+.grid-text img{
+    width: 100%
+}

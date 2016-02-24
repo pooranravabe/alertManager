@@ -1,0 +1,32 @@
+/* Small Devices, Tablets */
+@media only screen and (max-width : 767px) {
+    #main-nav-item{
+        margin-top: 0;
+    }
+    .navbar{
+        border:none;
+    }
+    .navbar-default .navbar-nav > li > a {
+        border-right: none;
+    }
+    .navbar-nav{
+        margin:0px -15px;
+        z-index: 999;
+        position:relative;
+    }
+    .nav > li{
+        background: url("../images/top-header-bg.jpg") repeat scroll 0 0 rgba(0, 0, 0, 0);
+        border-bottom:1px solid #5e5e5e;
+    }
+    #dropdown .dropdown-menu{
+        box-shadow: none;
+        width:100%;
+    }
+    .contant-group{
+        margin: 90px 0px;
+    }
+    .contant-group h2{
+        margin-top: 64px;
+    }
+
+}
