@@ -105,3 +105,61 @@ Route::post('alertManage/updateAlertSubs', [
     'uses' => 'AlertsubscriptionController@updateAlertSubs'
 ]);
 
+// Alert types added by kapil
+Route::get('alert/allTypes', [
+    'as' => 'alert/allTypes',
+    'uses' => 'AlertController@manageAlertType'
+]);
+
+Route::get('alert/addType', [
+    'as' => 'alert/addType',
+    'uses' => 'AlertController@addMainAlert'
+]);
+
+
+Route::post('alert/addedType', [
+    'as' => 'alert/addedType',
+    'uses' => 'AlertController@addedMainAlert'
+]);
+
+Route::post('alert/editType', [
+    'as' => 'alert/editType',
+    'uses' => 'AlertController@editMainAlert'
+]);
+
+Route::post('alert/updateType', [
+    'as' => 'alert/updateType',
+    'uses' => 'AlertController@UpdateMainAlert'
+]);
+
+Route::post('alert/deleteType', [
+    'as' => 'alert/deleteType',
+    'uses' => 'AlertController@deleteMainAlert'
+]);
+
+
+Route::post('alert/addSubType', [
+    'as' => 'alert/addSubType',
+    'uses' => 'AlertController@addSubAlert'
+]);
+
+Route::post('alert/addedSubType', [
+    'as' => 'alert/addedSubType',
+    'uses' => 'AlertController@addedSubAlert'
+]);
+
+Route::post('alert/editSubType', [
+    'as' => 'alert/editSubType',
+    'uses' => 'AlertController@editMainSubAlert'
+]);
+
+Route::post('alert/updateSubType', [
+    'as' => 'alert/updateSubType',
+    'uses' => 'AlertController@UpdateSubAlert'
+]);
+
+Route::post('alert/deleteSubType', [
+    'as' => 'alert/deleteSubType',
+    'uses' => 'AlertController@deleteSubAlert'
+]);
+// End alert types added by kapil
