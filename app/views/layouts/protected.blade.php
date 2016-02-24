@@ -54,25 +54,7 @@
       </div>
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="usernav">
-        <ul class="nav navbar-nav navbar-right" style="width:184px;">
-          <li id="dropdown" > <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Setup <span id="caret"></span></a>
-            <div class="top-arrow"></div>
-            <div class="dropdown-menu">
-              <div class="triangle-up"></div>
-              <div class="user-dropdown">
-                <h3>Setup</h3>
-                <div class="user-link"><a class="nav-item " href="{{url('setup/view-clientgroup')}}">Client Group</a> </div>
-                <div class="user-link"><a class="nav-item " href="{{url('setup/view-group-user')}}">Group - User</a></div>
-                <div class="user-link"><a class="nav-item " href="{{url('setup/viewprojects')}}">Project</a></div>
-                <div class="user-link"><a class="nav-item " href="{{url('setup/view-projects-groups')}}">Project - Client Group</a></div>
-                <div class="user-link"><a class="nav-item " href="{{url('setup/view-user-projects')}}">User - Projects</a> </div>
-                <div class="user-link"><a class="nav-item " href="{{url('setup/idea')}}">Idea</a></div>
-                <div class="user-link"><a class="nav-item " href="{{url('setup/user-idea')}}">User - Idea</a></div>
-                <div class="user-link"><a class="nav-item " href="{{url('setup/idea-projects')}}">Idea - Project</a></div>
-              </div>
-            </div>
-          </li>
-        </ul>
+        
       </div>
       <!-- /.navbar-collapse --> 
     </div>
@@ -89,7 +71,7 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="usernav">
         <ul class="nav navbar-nav navbar-right" style="width:184px;">
-          <li id="dropdown" > <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> Work Flow
+          <li id="dropdown" > <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> Alert Manager
           <span id="caret"></span></a>
             <div class="top-arrow"></div>
             <div class="dropdown-menu">
@@ -98,7 +80,6 @@
                 <h3>Work Flow</h3>
 				 <div class="user-link"><a class="nav-item " href="{{url('organization/AddOrganization')}}">Organization</a></div>
 				 
-                <div class="user-link"><a class="nav-item " href="{{url('idea/workflowmanager')}}">Workflow Type</a></div>
                 <div class="user-link"><a class="nav-item " href="{{url('idea/workflow')}}">Workflow</a></div>
                 
                

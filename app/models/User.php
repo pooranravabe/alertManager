@@ -1,5 +1,4 @@
 <?php
-
 //use Illuminate\Auth\UserTrait;
 //use Illuminate\Auth\UserInterface;
 //use Illuminate\Auth\Reminders\RemindableTrait;
@@ -14,7 +13,7 @@
 //	 *
 //	 * @var string
 //	 */
-//	protected $table = 'pooranusers';
+//	protected $table = 'alert_admin';
 //
 //	/**
 //	 * The attributes excluded from the model's JSON form.
@@ -29,7 +28,7 @@ use Cartalyst\Sentry\Users\Eloquent\User as SentryUser;
 class User extends SentryUser {
 
     // Override the SentryUser getPersistCode method.
-    protected $table = 'pooranusers';
+    protected $table = 'alert_admin';
     protected $hidden = array('password', 'remember_token');
     public function getPersistCode() {
         if (!$this->persist_code) {

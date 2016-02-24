@@ -38,6 +38,9 @@ class AuthController extends BaseController {
             );
             $remember = (Input::has('remember')) ? true : false;
             $user = Sentry::authenticate($credentials, $remember);
+			$cookie = Cookie::forever('usertype',$user->usertype);
+			$cookie = Cookie::forever('username', $user->first_name.$user->last_name);
+			$cookie = Cookie::forever('userid', $user->id);
             if (Input::has('remember')) {
                 $cookie = Cookie::forever('remember_email', Input::get('email'));
             } else {

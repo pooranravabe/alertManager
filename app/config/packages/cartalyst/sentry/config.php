@@ -95,7 +95,7 @@ return array(
     | Configuration specific to the user management component of Sentry.
     |
    */
-  'pooranusers' => array(
+  'alert_admin' => array(
     /*
       |--------------------------------------------------------------------------
       | Model

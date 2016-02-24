@@ -9,8 +9,8 @@ class BaseController extends Controller {
         if (Sentry::check()) {
             $this->user = Sentry::getUser();
             $profile = Profile::where('user_id', $this->user->id)->first();
-            $user_profile_pic = ($profile->photo) ? URL::asset('uploads/' . $profile->photo) : URL::asset('assets/images/60.png');
-            View::share('user_profile_pic', $user_profile_pic);
+           // $user_profile_pic = ($profile->photo) ? URL::asset('uploads/' . $profile->photo) : URL::asset('assets/images/60.png');
+           // View::share('user_profile_pic', $user_profile_pic);
         }
     }
 
