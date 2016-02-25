@@ -11,7 +11,11 @@ class AlertsubscriptionController extends BaseController {
         if (Sentry::check()) {
             $this->user = Sentry::getUser();
 			$this->userid = $this->user->id;		   
+<<<<<<< HEAD
 		   $tmp = DB::table('alert_admin')->select('email')->where('id','=', $this->user->id)->first();
+=======
+		   $tmp = DB::table('users')->select('email')->where('id','=', $this->user->id)->first();
+>>>>>>> 7cb4c53e405b64019345e395d24eb74ef4c12086
 		   $this->email = $tmp->email;
         }
     }
