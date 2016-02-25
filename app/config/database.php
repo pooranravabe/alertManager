@@ -55,7 +55,7 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'ravabe_dev',
+			'database'  => 'alert_dev',
 			'username'  => 'root',
 			'password'  => '',
 			'charset'   => 'utf8',

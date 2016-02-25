@@ -77,13 +77,10 @@
             <div class="dropdown-menu">
               <div class="triangle-up"></div>
               <div class="user-dropdown">
-                <h3>Work Flow</h3>
-				 <div class="user-link"><a class="nav-item " href="{{url('organization/AddOrganization')}}">Organization</a></div>
-				 
-                <div class="user-link"><a class="nav-item " href="{{url('idea/workflow')}}">Workflow</a></div>
-                
-               
-              </div>
+                <h3>Alert Manager</h3>
+																<div class="user-link"><a class="nav-item " href="{{url('alert/allTypes')}}">Alert Types</a></div>
+				            <div class="user-link"><a class="nav-item " href="{{url('alertManage/viewAlertSubs')}}">Alert Manager</a></div>
+														</div>
             </div>
           </li>
         </ul>
