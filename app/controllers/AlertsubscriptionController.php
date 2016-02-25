@@ -10,12 +10,8 @@ class AlertsubscriptionController extends BaseController {
         parent::__construct();
         if (Sentry::check()) {
             $this->user = Sentry::getUser();
-			$this->userid = $this->user->id;		   
-<<<<<<< HEAD
-		   $tmp = DB::table('alert_admin')->select('email')->where('id','=', $this->user->id)->first();
-=======
-		   $tmp = DB::table('users')->select('email')->where('id','=', $this->user->id)->first();
->>>>>>> 7cb4c53e405b64019345e395d24eb74ef4c12086
+			$this->userid = $this->user->id; 
+		   $tmp = DB::table('alert_admin')->select('email')->where('id',$this->user->id)->first();
 		   $this->email = $tmp->email;
         }
     }
@@ -28,7 +24,7 @@ class AlertsubscriptionController extends BaseController {
 		//$permissions = DB::table('permissions_sets')->select('id','cid','rid','mid','pread','pwrite', 'pupdate', 'pdelete')->get();
 		$modules = array();
 		foreach($categories  as $k => $cat){
-			$modobj = DB::table('role_modules')->select('id','module','cid','p_id')->where("cid", "=",$cat->id)->orderBy('cid', 'ASC')->get();
+			$modobj = DB::table('role_modules')->select('id','module','cid','p_id')->where("cid",$cat->id)->orderBy('cid', 'ASC')->get();
 			if($modobj) {					
 				$modules[$cat->id]['category'] = $cat->category;
 				$modules[$cat->id]['cid'] = $cat->id;
@@ -131,7 +127,7 @@ class AlertsubscriptionController extends BaseController {
 		$categories = DB::table('role_categories')->select('id','category')->get();
 		$modules = array();
 		foreach($categories  as $k => $cat){
-			$modobj = DB::table('role_modules')->select('id','module','cid','p_id')->where("cid", "=",$cat->id)->orderBy('cid', 'ASC')->get();
+			$modobj = DB::table('role_modules')->select('id','module','cid','p_id')->where("cid",$cat->id)->orderBy('cid', 'ASC')->get();
 			if($modobj) {					
 				$modules[$cat->id]['category'] = $cat->category;
 				$modules[$cat->id]['cid'] = $cat->id;
@@ -279,7 +275,7 @@ class AlertsubscriptionController extends BaseController {
 			
 				$modules = array();
 				foreach($categories  as $k => $cat) {
-					 $modobj 		 = DB::table('role_modules')->select('id','module','cid','p_id')->where("cid", "=",$cat->id)->orderBy('cid', 'ASC')->get();
+					 $modobj 		 = DB::table('role_modules')->select('id','module','cid','p_id')->where("cid",$cat->id)->orderBy('cid', 'ASC')->get();
 				
 					if($modobj) {					
 					$modules[$cat->id]['category'] = $cat->category;
@@ -397,7 +393,7 @@ class AlertsubscriptionController extends BaseController {
 		
 		$modules = array();	
 			foreach($categories  as $k => $cat) {
-				 $modobj = DB::table('role_modules')->select('id','module','cid','p_id')->where("cid", "=",$cat->id)->orderBy('cid', 'ASC')->get();
+				 $modobj = DB::table('role_modules')->select('id','module','cid','p_id')->where("cid",$cat->id)->orderBy('cid', 'ASC')->get();
 				if($modobj) {					
 					$modules[$cat->id]['category'] = $cat->category;
 					$modules[$cat->id]['cid'] = $cat->id;
