@@ -55,6 +55,7 @@ class AlertsubscriptionController extends BaseController {
 				$AlertSubsTitles->save();
 				$current_title_id = $AlertSubsTitles->id;
 				foreach($permisson as $kp =>$per) {
+					$role_module = RoleModules::where('id', $kp)->first();
 					$onoff = 0;
 					if (array_key_exists('onoff', $per)) {
 						if($per['onoff']=="on") 
@@ -63,6 +64,7 @@ class AlertsubscriptionController extends BaseController {
 					$AlertSubs  = new AlertSubs;
 					$AlertSubs->user_id = $userId;
 					$AlertSubs->subs_title_id = $current_title_id;
+					$AlertSubs->main_module_id 	= $role_module->cid;
 					$AlertSubs->role_module_id 	= $kp;	
 					$AlertSubs->subscription_status = $onoff;
 					$AlertSubs->created_at = date('Y-m-d H:i:s', time());
@@ -155,6 +157,7 @@ class AlertsubscriptionController extends BaseController {
 				$userId = $this->user->id; 			
 				AlertSubs::where('subs_title_id', $a_title_id)->delete();	
 				foreach($permisson as $kp =>$per) {
+					$role_module = RoleModules::where('id', $kp)->first();
 					$onoff = 0;
 					if (array_key_exists('onoff', $per)) {
 						if($per['onoff']=="on") 
@@ -163,6 +166,7 @@ class AlertsubscriptionController extends BaseController {
 					$AlertSubs  = new AlertSubs;
 					$AlertSubs->user_id = $userId;
 					$AlertSubs->subs_title_id = $a_title_id;
+					$AlertSubs->main_module_id 	= $role_module->cid;
 					$AlertSubs->role_module_id 	= $kp;	
 					$AlertSubs->subscription_status = $onoff;
 					$AlertSubs->created_at = date('Y-m-d H:i:s', time());
