@@ -104,6 +104,10 @@ Route::post('alertManage/updateAlertSubs', [
     'as' => 'alertManage/updateAlertSubs',
     'uses' => 'AlertsubscriptionController@updateAlertSubs'
 ]);
+Route::get('alertManage/getChannelResDetail', [
+    'as' => 'alertManage/getChannelResDetail',
+    'uses' => 'ResponseController@getChannelResDetail'
+]);
 
 // Alert types added by kapil
 Route::get('alert/allTypes', [
