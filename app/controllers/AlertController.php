@@ -16,14 +16,12 @@ class AlertController extends BaseController {
 		if(count($arrAlertTypes) > 0){
 			foreach($arrAlertTypes AS $key=>$val){
 				$arrList[$key]['id'] = $val['id'];
-				$arrList[$key]['type'] = $val['type'];	
+				$arrList[$key]['type'] = $val['type'];
 				$arrList[$key]['subtype'] = 	$arrAlertTypes = AlertTypes::getAlertSubTypes($val['id']);						
 			} 
 		}
 		return View::make('alert.alert-types')->with('data', $arrList);
 	}
-	
-	
 	
 	
 	public function addedMainAlert(){
@@ -56,12 +54,32 @@ class AlertController extends BaseController {
 		$alertSubName = addslashes(Input::get('alertSubName'));
 		$alertTypeId = addslashes(Input::get('alertTypeId'));
 		$mainAlertName = addslashes(Input::get('mainAlertName'));
+		$alertSubMessage = addslashes(Input::get('alertSubMessage'));
+		$alertColorCode = addslashes(Input::get('alertColorCode'));
+		$moduleName = addslashes(Input::get('moduleName'));
+		$subModuleId = addslashes(Input::get('subModuleId'));
+		
+		$varFromStatus = addslashes(Input::get('fromStatus'));
+		$varFromPercent = addslashes(Input::get('fromPercent'));
+		$varToStatus = addslashes(Input::get('toStatus'));
+		$vartoPercent = addslashes(Input::get('toPercent'));
+	
 		if($alertSubName != null){
 			$checkAlert = AlertTypes::where('type', $alertSubName)->where('parent_id', $alertTypeId)->first();	
 			if($checkAlert == null){
 					$alerttype = new AlertTypes;
 					$alerttype->type = $alertSubName;
+					$alerttype->color_code = $alertColorCode;
+					$alerttype->message = $alertSubMessage;
 					$alerttype->parent_id = $alertTypeId;
+					$alerttype->module_id = $moduleName;
+					$alerttype->module_sub_id = $subModuleId;
+					
+					$alerttype->range_from_status = $varFromStatus;
+					$alerttype->range_from = $varFromPercent;
+						$alerttype->range_to_status = $varToStatus;
+					$alerttype->range_to = $vartoPercent;
+					
 					$alerttype->created_at = date('Y-m-d');
 					$alerttype->updated_at = date('Y-m-d');
 					$alerttype->save();
@@ -102,15 +120,23 @@ class AlertController extends BaseController {
 				}
 	} // End UpdateOrganization function
 		
-	public function UpdateSubAlert(){
+	public function UpdateSubAlert(){ 
 		  $varUpdateName = Input::get('alertTypeEditName');
 				$alertSubParentId = Input::get('alertSubParentId');
+				$alertColorCode = Input::get('alertColorCode');
+				$alertSubMessage = Input::get('alertSubMessage');
+				$moduleName = Input::get('moduleName');
+				$subModuleId = Input::get('subModuleId');
+				$fromStatus = Input::get('fromStatus');
+				$fromPercent = Input::get('fromPercent');
+				$toStatus = Input::get('toStatus');
+				$toPercent = Input::get('toPercent');				
 				if($varUpdateName != null){
 						$varAlertTypeEditId = Input::get('alertTypeEditId');
 						
 						$checkAlert = AlertTypes::where('type', $varUpdateName)->where('id', '!=', $varAlertTypeEditId)->where('parent_id', '=', $alertSubParentId)->first();
 						if($checkAlert == null){
-							 $update = AlertTypes::where('id', $varAlertTypeEditId)->update(array('type' => $varUpdateName));
+							 $update = AlertTypes::where('id', $varAlertTypeEditId)->update(array('type' => $varUpdateName,'color_code' =>$alertColorCode,'message' =>$alertSubMessage, 'module_id' => $moduleName, 'module_sub_id' =>$subModuleId,'range_from_status'=>$fromStatus,'range_from'=>$fromPercent,'range_to_status'=>$toStatus,'range_to'=>$toPercent));
 								Toastr::success('Alert Sub type updated successfully !!');	
 								return Redirect::to('alert/allTypes');
 						}
@@ -131,22 +157,63 @@ class AlertController extends BaseController {
 			return View::make('alert.edit-main')->with('alertTypeName', $alertName)->with('alerttypeId', $alertId);
 	}
 	
-		public function editMainSubAlert(){
+		public function editMainSubAlert(){ //echo "<pre>";print_r($_POST);die;
 		 $alertName = Input::get('alertName');
 		 $alertId = Input::get('alertId');
+			$module_id = Input::get('module_id');
 			$alertParentId = Input::get('alertParentId');
-			return View::make('alert.edit-sub')->with('alertTypeName', $alertName)->with('alertTypeId', $alertId)->with('alertparentId', $alertParentId);
+			$module_sub_id = Input::get('module_sub_id');
+			$alert_message = Input::get('alert_message');
+			$color_code = Input::get('color_code');
+			
+		 $from_status = Input::get('from_status');
+			$range_from = Input::get('range_from');
+			$to_status = Input::get('to_status');
+			$range_to = Input::get('range_to');		
+			
+			
+			$categories = DB::table('role_categories')->select('id','category')->get();
+			//echo "<pre>";print_r($categories);die;
+			$modobj = DB::table('role_modules')->select('id','module')->where("cid", "=",$module_id)->orderBy('id', 'ASC')->get();			
+			$data = array('alertId'=>$alertId,'alertParentId'=>$alertParentId,'alertName'=>$alertName,'module_id'=>$module_id,'module_sub_id'=>$module_sub_id,'alert_message'=>$alert_message,'color_code'=>$color_code,'modulecategories'=>$categories,'sodulesubcategories'=>$modobj,'from_status'=>$from_status,'range_from'=>$range_from,'to_status'=>$to_status,'range_to'=>$range_to);	
+			return View::make('alert.edit-sub')->with('data', $data);
 	}
 	
 	public function addMainAlert(){
 		return View::make('alert.add-main');
 	}	
 	
-	public function addSubAlert(){
+	public function addSubAlert(){		
 		$alertId = Input::get('alertId');
-		$alertName = Input::get('alertName');		
-		return View::make('alert.add-sub-main')->with('alertId', $alertId)->with('alertName', $alertName);
+		$alertName = Input::get('alertName');
+		$categories = DB::table('role_categories')->select('id','category')->get();
+		$data = array('alertId'=>$alertId,'alertName'=>$alertName,'modulecategories'=>$categories);	
+		return View::make('alert.add-sub-main')->with('data', $data);
 	}
+
+	
+	public function getSubModule(){
+		$varModuleId = Input::get('moduleId');
+		$varDropDown = '';
+		if($varModuleId!='' && $varModuleId > 0){
+			$modobj = DB::table('role_modules')->select('id','module')->where("cid", "=",$varModuleId)->orderBy('id', 'ASC')->get();
+			
+				$varDropDown = '<br>Sub Module Name:<br>';
+				$varDropDown .= '<select class="list-select-box submodulename" name="subModuleId" id="sub_module" style="width:200px;" required>';
+				$varDropDown .= '<option value="">Select Sub Moduel</option>';
+					foreach($modobj as $key=>$val){
+						$varDropDown .='<option value="'.$val->id.'">'.$val->module.'</option>';
+					}
+				$varDropDown .= '</select>';
+		
+		echo $varDropDown;
+		}
+		else{
+				echo $varDropDown = '<br>Please select Module name';	
+		}
+		exit;
+	}
+	
 	
 	public function deleteMainAlert(){
 			$varAlertTypeEditId = Input::get('alertId');

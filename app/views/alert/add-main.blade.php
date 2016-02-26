@@ -4,7 +4,7 @@
 <h1 style="text-align:center;">Add Alert Type</h1>
 	       <div>                      
 									{{ Form::open(array('url' => 'alert/addedType')) }}  
-            <label for="organization"><h4>Alert Name</h4></label></br>                         
+            <label for="organization"><h4>Alert Title Name</h4></label></br>                         
             <input type="text" id="alertName" name="alertName" value="" class="form-control" required>     
 												</br>
 												<div>

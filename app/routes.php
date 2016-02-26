@@ -166,4 +166,10 @@ Route::post('alert/deleteSubType', [
     'as' => 'alert/deleteSubType',
     'uses' => 'AlertController@deleteSubAlert'
 ]);
+
+Route::get('alert/getSubModule', [
+    'as' => 'alert/getSubModule',
+    'uses' => 'AlertController@getSubModule'
+]);
+
 // End alert types added by kapil
