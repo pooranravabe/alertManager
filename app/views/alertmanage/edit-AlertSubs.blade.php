@@ -20,7 +20,7 @@
         </select>  
 		</br>
 		
-		<h1> Role Premissions</h1>
+		<h3>Set Alerts</h3>
 		<table class="table table-bordered" width="60%" align="center">
    
 			<tr>
@@ -68,7 +68,7 @@
 			<tr><td>
 			<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
 					<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-					<input type='submit' name='submit' value='Update'/>
+					<input type='submit' name='submit' value='Update' class="btn btn-info"/>
 						</div></div></td></tr>
    
 		</table>
