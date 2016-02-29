@@ -172,4 +172,12 @@ Route::get('alert/getSubModule', [
     'uses' => 'AlertController@getSubModule'
 ]);
 
+Route::get('alert/test', [
+    'as' => 'alert/test',
+    'uses' => 'AlerttestController@tmprole'
+]);
+
 // End alert types added by kapil
+
+
+
