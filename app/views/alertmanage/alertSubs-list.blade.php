@@ -11,8 +11,8 @@
 <div class="row">
   <h1> Alert Subscription List</h1>
  <br/> <br/>
- <a href="{{url('alertManage/addAlertSubs')}}" class="nav-item btn btn-info ">Add New Subscription</a>
-  <br/> <br/>
+ <!--<a href="{{url('alertManage/addAlertSubs')}}" class="nav-item btn btn-info ">Add New Subscription</a>
+  <br/> <br/>-->
   <table class="table table-bordered" width="60%" align="center">
     <tr>
       <th>Sr No. </th>
@@ -29,12 +29,12 @@
 			<input type="hidden" id="titleRole" name="titleRole" value="{{$title->permission_role}}" />
 			<input type="hidden" id="titleName" name="titleName" value="{{$title->title}}" required/>
 			<button type="submit" class="btn btn-info">Edit</button>
-		{{Form::close()}}</td>
-        <td>       
+		{{Form::close()}}
+        <!--      
 		{{Form::open(array('url'=> 'alertManage/deleteAlertSubs'))}}
 			<input type="hidden" id="titleId" name="titleId" value="{{$title->id}}" />
 			<button type="submit" class="btn btn-info">Delete</button></td>
-		{{Form::close()}}
+		{{Form::close()}}-->
 	  </td>
     </tr>
     @endforeach
