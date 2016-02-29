@@ -1,6 +1,6 @@
 <?php
 /* class to get permision list from database of binding of set of functions */ 
-class alertPermission {
+class alertPermission  {
 	
 	public $user = null;
 	public $UserEmail = null;
@@ -30,15 +30,15 @@ class alertPermission {
 	
 	
 	 public static function tmprole() {
+	 //return 'sumit';
+	 $alert_subs_titles = alertPermission::getRoleID($userId=1);
 	 
-	 $alert_subs_titles = AlerttestController::getRoleID($userId=1);
-	 
-	
+	//return $alert_subs_titles['alert_subs_titles_id'];
 	 $modules = array();
 	 if (sizeof($alert_subs_titles)>0) {
-		$modules =  AlerttestController::getAlertModules(1,$alert_subs_titles['roleid'],$alert_subs_titles['alert_subs_titles_id']);
+		$modules =  alertPermission::getAlertModules(1,$alert_subs_titles['roleid'],$alert_subs_titles['alert_subs_titles_id']);
 	 }
-	 
+	 return $modules;
 	 } 
 	 
 	 public static function getRoleID($userId) {
@@ -53,7 +53,7 @@ class alertPermission {
 			$rolemodule['roleid']  = $Role->permission_role;
 			$rolemodule['alert_subs_titles_id']  = $Role->id;
 			}
-	  
+	  //return 100;
 		return $rolemodule;
 	}
    
@@ -80,9 +80,9 @@ class alertPermission {
 	      $titlesmodule['role_module_id']  = $vlaue->role_module_id;
 	     
 			  // $modules[$key]['subscription_status'] = $role->subscription_status;
-  AlerttestController::getAlertTypesModes($titlesmodule['main_module_id'] ,$titlesmodule['role_module_id']);
+$getalertmodule= alertPermission::getAlertTypesModes($titlesmodule['main_module_id'] ,$titlesmodule['role_module_id']);
 			}
-			return $titlesmodule;	
+			return $getalertmodule;	
 	     }
 //echo $titlesmodule;
 	
@@ -99,11 +99,13 @@ class alertPermission {
 				//echo'<pre>';
 				//print_r($moduletype);
 				//var_dump($moduletype);
-				die;
-		
+				//die;
+		$modules = array();
 	      foreach ($moduletype as $key => $role) {
-	           $modules[] = $role->id;
-	           $modules[] = $role->color_code;
+	           $modules[$role->module_id][$role->module_sub_id]['id'] = $role->id;
+	           $modules[$role->module_id][$role->module_sub_id]['color_code'] = $role->color_code;
+			   $modules[$role->module_id][$role->module_sub_id]['module_id'] = $role->module_id;
+			   $modules[$role->module_id][$role->module_sub_id]['module_sub_id'] = $role->module_sub_id;
 			}
           return $modules;
 				
