@@ -11,7 +11,7 @@
 <div class="row">
   <h1> Alert Subscription List</h1>
  <br/> <br/>
- <a href="{{url('alertManage/addAlertSubs')}}" class="nav-item ">Add New Subscription</a>
+ <a href="{{url('alertManage/addAlertSubs')}}" class="nav-item btn btn-info ">Add New Subscription</a>
   <br/> <br/>
   <table class="table table-bordered" width="60%" align="center">
     <tr>

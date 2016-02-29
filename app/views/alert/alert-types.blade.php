@@ -21,7 +21,7 @@ form.ng-pristine {
 <div class="row">
   <h1> Manage Alerts</h1>
   <br/> <br/>
- <h3><a href="{{url('alert/addType')}}" class="nav-item ">Add New</a></h3>
+ <h3><a href="{{url('alert/addType')}}" class="nav-item btn btn-info">Add New</a></h3>
   <br/> <br/>
   <table class="table table-bordered tablepadding" width="60%" align="center">
     <tr>
@@ -82,13 +82,19 @@ form.ng-pristine {
 																	
 																<button type="submit" class="btn btn-info">Update</button>
 															{{Form::close()}}
-															@if($subalert['range_from_status']!=''){{ucfirst($subalert['range_from_status']).' then'}}@endif
-															@if($subalert['range_from']!='0'){{ucfirst($subalert['range_from']).'%'}}@endif
-															@if($subalert['range_to_status']!=''){{'To '.ucfirst($subalert['range_to_status']).' then'}}@endif
-															@if($subalert['range_to']!='0'){{ucfirst($subalert['range_to']).'%&nbsp;&nbsp;&nbsp;'}}@endif
+                                                                           
+                                @if($subalert['module_name']!='0'){{$subalert['module_name']}}	:: {{$subalert['sub_module_name']}}
+									@endif                                           
+                                <br/>                                           
+                               <?php if($alert['type']=="Red" || $alert['type']=="Amber" || $alert['type']=="Green") { ?>
+						@if($subalert['range_from_status']!=''){{ucfirst($subalert['range_from_status']).' then'}}@endif
+					     @if($subalert['range_from']>=0){{ucfirst($subalert['range_from']).'%'}}@endif
+						@if($subalert['range_to_status']!=''){{'To '.ucfirst($subalert['range_to_status']).' then'}}@endif
+						@if($subalert['range_to']>=0){{ucfirst($subalert['range_to']).'%&nbsp;&nbsp;&nbsp;'}}@endif
+                                                                           
+                               <?php } ?>
 															
-																@if($subalert['module_name']!='0'){{$subalert['module_name']}}	:: {{$subalert['sub_module_name']}}
-															@endif
+									
 																
 													</td>
 													<td>       
