@@ -136,6 +136,9 @@ class AlertsubscriptionController extends BaseController {
 				$modules[$cat->id]['module'] = $modobj;						
 			}
 		}
+		
+		
+		
 		$data = array('roles'=>$roles, 'categories'  =>$categories, 'modules'  =>$modules, 'title_name'=>$title_name, 'title_id'=>$title_id, 'title_role'=>$title_role, 'title_info'=>$cboxinfo);	
 		//echo"<pre>";var_dump(in_array(20,$cboxinfo));exit;
 		return View::make('alertmanage.edit-AlertSubs')->with('data', $data);
