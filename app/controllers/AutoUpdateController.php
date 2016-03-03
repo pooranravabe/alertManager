@@ -1,32 +1,23 @@
 <?php
-//require_once 'C:/xampp/htdocs/ravabe/vendor/autoload.php';
-//require_once 'Google/Client.php';
-//require_once 'Google/Service/YouTube.php';
-//require_once 'Google/Http/MediaFileUpload.php';
-class ResponseController extends BaseController {
-	public $userid;
-	public $email;
+
+class AutoUpdateController extends BaseController {
 	
-    public function __construct() {
-        $this->beforeFilter('auth');
-        parent::__construct();
-        if (Sentry::check()) {
-            $this->user = Sentry::getUser();
-			$this->userid = $this->user->id;		   
-		   $tmp = DB::table('alert_admin')->select('email')->where('id','=', $this->user->id)->first();
-		   $this->email = $tmp->email;
-        }
-    }
+	public static function AutoUpdate(){
+		$allusers = DB::table('users')->select('id')->get();
+		foreach($allusers as $key =>$usr) {
+			AutoUpdateController::getChannelResDetail($usr->id);
+		}
+	}
 	
 	public function getResponse(){
 		// url location
         	$Chklolcation =  new checkLocations();
 		$Chklolcation->saveinfo();
         $name = "Hello!";
-		$userid=$this->user->id;
+		$userid=$user;
 		$Response_details = array();
 		$Response_networkwise = array();
-		$NetworkIds = Publishstatus::getNetworkIds($this->user->id);
+		$NetworkIds = Publishstatus::getNetworkIds($user);
 		$tf_like=0;$tt_like=0;$tl_like=0;$ty_like=0;
 		$tf_share=0;$tt_share=0;$tl_share=0;$ty_share=0;
 		$tf_comment=0;$tt_comment=0;$tl_comment=0;$ty_comment=0;
@@ -391,7 +382,7 @@ class ResponseController extends BaseController {
 		
 		//echo"<pre>";
 		//var_dump($NetworkIds);exit;
-    	return View::make('response.response')->with('name',$name)->with('id',$this->user->id)->with('Network_responses',$Network_responses);
+    	return View::make('response.response')->with('name',$name)->with('id',$user)->with('Network_responses',$Network_responses);
 
     }
 	
@@ -402,7 +393,7 @@ class ResponseController extends BaseController {
 		$Contents_Texts = array();
 		$pro_id=(int)Route::Input('pro_id');
 		$net_name=(int)Route::Input('net_name');
-		$NetworkIds = Publishstatus::getNetworkIds($this->user->id);
+		$NetworkIds = Publishstatus::getNetworkIds($user);
 		foreach($NetworkIds[0]["project_channel_ids"] as $pro_key=>$projects)
 		{
 			if(key($projects)==$pro_id)
@@ -419,11 +410,11 @@ class ResponseController extends BaseController {
 		
 		//echo"<pre>";
 		//var_dump($Contents_Texts);exit;
-		return View::make('response.postsResponse')->with('name','Hello!')->with('id',$this->user->id)->with('NetworkIds',$NetworkIds)->with('Contents_Texts',$Contents_Texts);
+		return View::make('response.postsResponse')->with('name','Hello!')->with('id',$user)->with('NetworkIds',$NetworkIds)->with('Contents_Texts',$Contents_Texts);
 	}
 	
 	public function getResponseOnEveryPost(){
-		$userid=$this->user->id;
+		$userid=$user;
 		$Contents_Texts = array();
 		$Response_allposts = array();
 		$NetworkIds = Publishstatus::getNetworkIds($userid);
@@ -708,22 +699,22 @@ class ResponseController extends BaseController {
 				//var_dump('sumit9');
 			}
 		}
-		return View::make('response.responseAllposts')->with('name','Hello!')->with('id',$this->user->id)->with('Response_allposts',$Response_allposts);
+		return View::make('response.responseAllposts')->with('name','Hello!')->with('id',$user)->with('Response_allposts',$Response_allposts);
 	}
 	
 	public function getCommentsOfPost(){
-		$allComments=ResponseComments::getComments($this->user->id);
+		$allComments=ResponseComments::getComments($user);
 		//echo"<pre>";
 		//var_dump($allComments);exit;
-		return View::make('response.responseAllcomments')->with('name','Hello!')->with('id',$this->user->id)->with('allComments',$allComments);
+		return View::make('response.responseAllcomments')->with('name','Hello!')->with('id',$user)->with('allComments',$allComments);
 	}
 	
 	public function getTopResponse(){
 		$Contents_Texts = array();
 		$Response_details = array();
 		$Response_networkwise = array();
-		$manageProject=ProjectUsers::getmanageProject($this->user->id);
-		$ownProject=Project::getAllProjects($this->user->id, 24);
+		$manageProject=ProjectUsers::getmanageProject($user);
+		$ownProject=Project::getAllProjects($user, 24);
 		$projects = array(
 			'manageProject' => $manageProject,
 			'ownProject' => $ownProject
@@ -949,7 +940,7 @@ class ResponseController extends BaseController {
 		);
 		//echo"<pre>";
 		//var_dump($Network_responses);exit;
-		return View::make('response.topResponse')->with('name','Hello!')->with('id',$this->user->id)->with('Network_responses',$Network_responses);
+		return View::make('response.topResponse')->with('name','Hello!')->with('id',$user)->with('Network_responses',$Network_responses);
 	}
 		
 	public function getProjectResponse(){
@@ -958,8 +949,8 @@ class ResponseController extends BaseController {
 		$Chklolcation->saveinfo();
 		$Contents_Texts = array();
 		$Project_responses = array();
-		$manageProject=ProjectUsers::getmanageProject($this->user->id);
-		$ownProject=Project::getAllProjects($this->user->id, 24);
+		$manageProject=ProjectUsers::getmanageProject($user);
+		$ownProject=Project::getAllProjects($user, 24);
 		$projects = array(
 			'manageProject' => $manageProject,
 			'ownProject' => $ownProject
@@ -1120,7 +1111,7 @@ class ResponseController extends BaseController {
 		}
 		//echo"<pre>";
 		//var_dump($Project_responses);exit;
-		return View::make('response.projectResponse')->with('name','Hello!')->with('id',$this->user->id)->with('Project_responses',$Project_responses);
+		return View::make('response.projectResponse')->with('name','Hello!')->with('id',$user)->with('Project_responses',$Project_responses);
 	}
 	
 	public function getProjectResponseDetails(){
@@ -1336,15 +1327,15 @@ class ResponseController extends BaseController {
 		echo"<pre>";
 		var_dump($total_channel_info);exit;
 		
-		//return View::make('response.projectInfoResponse')->with('name','Hello!')->with('id',$this->user->id)->with('total_content_text',$total_content_text)->with('total_channel_info',$total_channel_info)->with('conntent_result',$conntent_result);
+		//return View::make('response.projectInfoResponse')->with('name','Hello!')->with('id',$user)->with('total_content_text',$total_content_text)->with('total_channel_info',$total_channel_info)->with('conntent_result',$conntent_result);
 	}
 	
 	public function getFeedsResponse(){
 		$Contents_Texts = array();
 		$Response_details = array();
 		$Response_networkwise = array();
-		$manageProject=ProjectUsers::getmanageProject($this->user->id);
-		$ownProject=Project::getAllProjects($this->user->id);
+		$manageProject=ProjectUsers::getmanageProject($user);
+		$ownProject=Project::getAllProjects($user);
 		$projects = array(
 			'manageProject' => $manageProject,
 			'ownProject' => $ownProject
@@ -1497,13 +1488,13 @@ class ResponseController extends BaseController {
 		
 	}
 	
-	public function getChannelResDetail(){
+	public static function getChannelResDetail($user){
 		$result = array();
 		$channel_res = array();
 		$channel_ids = array();
 		$Contents_Texts = array();
-		$manageProject=ProjectUsers::getmanageProject($this->user->id);
-		$ownProject=Project::getAllProjects1($this->user->id);
+		$manageProject=ProjectUsers::getmanageProject($user);
+		$ownProject=Project::getAllProjects1($user);
 		$projects = array(
 			'manageProject' => $manageProject,
 			'ownProject' => $ownProject
@@ -1549,6 +1540,7 @@ class ResponseController extends BaseController {
 					$token= $channel_detail->auth_detail;
 					//Here get the likes
 					$likesurl="https://graph.facebook.com/likes?id=".$responseObj."&access_token=";
+
 					$accessToken=(json_decode($token)->access_token);
 					$likesurl_with_token = $likesurl.$accessToken ;
 					$context = @file_get_contents($likesurl_with_token);
@@ -1700,12 +1692,12 @@ class ResponseController extends BaseController {
 			//var_dump($res["like"]);exit;
 			$checkCh = ResChannelAlert::where('channel_id', $cr_key)->first();
 			if($checkCh){
-				$update = ResChannelAlert::where('channel_id', $cr_key)->where('user_id', $this->user->id)->update(array('like_count' => $res["like"], 'share_count' => $res["share"], 'comment_count' => $res["comment"]));
+				$update = ResChannelAlert::where('channel_id', $cr_key)->where('user_id', $user)->update(array('like_count' => $res["like"], 'share_count' => $res["share"], 'comment_count' => $res["comment"]));
 				var_dump("updated Successfully");
 			}
 			else{
 				$reschannelalert = new ResChannelAlert;
-				$reschannelalert->user_id = $this->user->id;
+				$reschannelalert->user_id = $user;
 				$reschannelalert->channel_id = $cr_key;
 				$reschannelalert->like_count = $res["like"];
 				$reschannelalert->share_count = $res["share"];
@@ -1728,8 +1720,8 @@ class ResponseController extends BaseController {
 	public function getProjectView(){
 		$channel_ids = array();
 		$Contents_Texts = array();
-		$manageProject=ProjectUsers::getmanageProject($this->user->id);
-		$ownProject=Project::getAllProjects($this->user->id, 24);
+		$manageProject=ProjectUsers::getmanageProject($user);
+		$ownProject=Project::getAllProjects($user, 24);
 		$projects = array(
 			'manageProject' => $manageProject,
 			'ownProject' => $ownProject
@@ -1770,8 +1762,8 @@ class ResponseController extends BaseController {
 	public function Unknown_activity_feed(){
 		$channel_ids = array();
 		$Contents_Texts = array();
-		$manageProject=ProjectUsers::getmanageProject($this->user->id);
-		$ownProject=Project::getAllProjects1($this->user->id);
+		$manageProject=ProjectUsers::getmanageProject($user);
+		$ownProject=Project::getAllProjects1($user);
 		$projects = array(
 			'manageProject' => $manageProject,
 			'ownProject' => $ownProject
@@ -1801,7 +1793,7 @@ class ResponseController extends BaseController {
 	public function getAllOrg(){
 		$orgs = array();
 		$orgarr = array('-Organization-');
-		$ownOrg = Organization::getcreatedOrg($this->user->id);
+		$ownOrg = Organization::getcreatedOrg($user);
 		$otrOrg = Organization::getAssociatedOrg($this->user->email);
 		/*echo"<pre>";
 		var_dump($ownOrg);
@@ -1824,9 +1816,9 @@ class ResponseController extends BaseController {
 		error_reporting(E_ALL & ~E_NOTICE);
 		$orgs = array();
 		$orgarr = array('-Organization-');
-		$ownOrg = Organization::getcreatedOrg($this->user->id);
+		$ownOrg = Organization::getcreatedOrg($user);
 	
-		$otrOrg = Organization::getAssociatedOrg($this->user->id);		
+		$otrOrg = Organization::getAssociatedOrg($user);		
 		$orgs = array(
 			'ownOrg' => $ownOrg,
 			'otrOrg' => $otrOrg,
@@ -1844,7 +1836,7 @@ class ResponseController extends BaseController {
 		$projects = array();
 		$entitledProject = array();
 		$proarr = array();
-		$manageProject=ProjectUsers::getmanageProject($this->user->id);
+		$manageProject=ProjectUsers::getmanageProject($user);
 		foreach($manageProject as $mp_key=>$project){
 			$proInfo = Project::where('id', $project)->first();
 			if($proInfo){
@@ -1853,7 +1845,7 @@ class ResponseController extends BaseController {
 				}
 			}
 		}
-		$ownProject=Project::getAllProjects($this->user->id, $organization_id);
+		$ownProject=Project::getAllProjects($user, $organization_id);
 		$projects = array(
 			'manageProject' => $entitledProject,
 			'ownProject' => $ownProject
@@ -2202,7 +2194,7 @@ class ResponseController extends BaseController {
 		$total_channel_info = array();
 			
 		$ownProject= Input::get('pro_ids');
-		$ownProject = ProjectUsers::getmanageProject($this->user->id);
+		$ownProject = ProjectUsers::getmanageProject($user);
 		$projects = array(
 			'manageProject' => $manageProject,
 			'ownProject' => $ownProject
@@ -3210,7 +3202,7 @@ class ResponseController extends BaseController {
 	
 	public function postReplyOnComment(){
 		//$p_id='1569585423364165';
-		//$user_id = $this->user->id;
+		//$user_id = $user;
 		$comm_res_id = Input::get('comm_id');
 		$con_ch_id =  Input::get('con_id');
 		$reply_text =  Input::get('reply_text');
