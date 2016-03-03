@@ -32,10 +32,13 @@ class AlertTypes extends Eloquent {
 							$arr[$key]['subscription_id'] = $val['subscription_id'];
 							$arr[$key]['subscription_role'] = $val['subscription_role'];
 							if($val['module_id'] > 0){
-								$modules = DB::table('role_categories')->select('category')->where("id", "=",$val['module_id'])->first();
+								
+								$modules = DB::table('role_categories')->select('category')->where("id",$val['module_id'])->first();								
 								$arr[$key]['module_name'] = 	$modules->category;
-								$submodules = DB::table('role_modules')->select('module')->where("id", "=",$val['module_sub_id'])->first();
+								$submodules = DB::table('role_modules')->select('module')->where("id",$val['module_sub_id'])->first();
+								if(sizeof($submodules))
 								$arr[$key]['sub_module_name'] = $submodules->module;
+								
 							}
 							else{
 								$arr[$key]['module_name'] = 0;

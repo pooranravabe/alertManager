@@ -311,7 +311,6 @@ class AlertController extends BaseController {
         }
         return Response::json(array('status' => 'success'));
     }
-<<<<<<< HEAD
 	
 	
 	public function publishapi(){
@@ -327,6 +326,4 @@ class AlertController extends BaseController {
 					
 					echo json_encode($alertvalues);
 				}
-=======
->>>>>>> d4fe220d9f02d818d5f4634b8456d99fb867b11b
 }
