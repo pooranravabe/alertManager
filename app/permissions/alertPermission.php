@@ -40,79 +40,83 @@ class alertPermission  {
 	 }
 	 return $modules;
 	 } 
-	 
+
 	 public static function getRoleID($userId) {
-	 
-	    $Role 	  =  AlertSubsTitles::select('*')										
+	    $Roles 	  =  DB::table('alert_subs_titles')->select('*')										
 										->where('user_id', $userId)
-										->first();
-										
-		$rolemodule = array();	
-									
-		if (sizeof($Role)>0) {
-			$rolemodule['roleid']  = $Role->permission_role;
-			$rolemodule['alert_subs_titles_id']  = $Role->id;
-			}
-	  //return 100;
-		return $rolemodule;
-	}
-   
-	
-	public static function getAlertModules($userId,$roleid,$alert_subs_titles_id) {
-	
-	$alltitles 	  = DB::table('alert_subs')
-										->select('*')										
-										->where('user_id', $userId)
-										->where('subs_title_id', $alert_subs_titles_id)
-										->where('subscription_status', 1)
 										->get();
 										
-	///echo "<pre>";
-	//print_r($alltitles);
-	//die;			
-	
-		
-									
-	if (sizeof($alltitles)>0) {
-		$titlesmodule = array();								
-	    foreach ($alltitles as $key => $vlaue) {
-         $titlesmodule['main_module_id']  = $vlaue->main_module_id;
-	      $titlesmodule['role_module_id']  = $vlaue->role_module_id;
-	     
-			  // $modules[$key]['subscription_status'] = $role->subscription_status;
-$getalertmodule= alertPermission::getAlertTypesModes($titlesmodule['main_module_id'] ,$titlesmodule['role_module_id']);
+		$rolemodule = array();								
+		if (sizeof($Roles)>0) {
+			foreach($Roles as $r_k=> $Role){
+				$rolemodule[] = array(
+					'roleid' => $Role->permission_role,
+					'alert_subs_titles_id' => $Role->id,
+				);
 			}
-			return $getalertmodule;	
-	     }
-//echo $titlesmodule;
-	
+		}
+		return $rolemodule;
+	}//Correct
+   
+	public static function checkParentModule($id){
+		$alltitles = DB::table('alert_types')
+								->select('id')										
+								->where('module_sub_id','=',$id)
+								->get();
+		if(count($alltitles) > 0)
+			return true;
+		else
+			return false;
 	}
 	
+	public static function getAlertModules($rolemodules) { 
+		$getalertmodule = array();
+		if(count($rolemodules)>0){
+				$alert_subs_titles_id = $rolemodules['alert_subs_titles_id'];
+				$alltitles = DB::table('alert_subs')
+																->select('*')										
+																->where('subs_title_id', $alert_subs_titles_id)
+																->where('subscription_status', 1)
+																->get();
+								
+				if (sizeof($alltitles)>0) {
+					$titlesmodule = array();								
+					foreach ($alltitles as $key => $vlaue) {
+						if(alertPermission::checkParentModule($vlaue->role_module_id)){
+							$getalertmodule[$alert_subs_titles_id][$rolemodules['roleid']][$vlaue->main_module_id][$vlaue->role_module_id] = alertPermission::getAlertTypesModes($vlaue->main_module_id,$vlaue->role_module_id);
+						}
+					}
+				} 
+		}
+		return $getalertmodule;	
+	}
 	
 	public static function getAlertTypesModes($moduleid ,$submodule) {
-		$moduletype 	  = DB::table('alert_types')
-										->select('*')										
-										->where('module_id', $moduleid)
-										->where('module_sub_id', $submodule)
-										->get();
-				
-				//echo'<pre>';
-				//print_r($moduletype);
-				//var_dump($moduletype);
-				//die;
+		
+		$moduletype = DB::table('alert_types')
+							->select('*')										
+							->where('module_id', $moduleid)
+							->where('module_sub_id', $submodule)
+							->get();
+							
 		$modules = array();
+		$Alertmodules = array();
 	      foreach ($moduletype as $key => $role) {
-	           $modules[$role->module_id][$role->module_sub_id]['id'] = $role->id;
-	           $modules[$role->module_id][$role->module_sub_id]['color_code'] = $role->color_code;
-			   $modules[$role->module_id][$role->module_sub_id]['module_id'] = $role->module_id;
-			   $modules[$role->module_id][$role->module_sub_id]['module_sub_id'] = $role->module_sub_id;
+			 $Alertmodules[$role->id] = array(
+	           'id' => $role->id,
+			   'type' => $role->type,
+	           'color_code' => $role->color_code,
+			   'module_id' => $role->module_id,
+			   'module_sub_id' => $role->module_sub_id,
+			   'message' => $role->message,
+			   
+			   );
 			}
-          return $modules;
-				
-	
-
-	
+			//echo"<pre>";var_dump($Alertmodules);exit;	
+          return $Alertmodules;
 	}	
+	
+   	
 }
 
 

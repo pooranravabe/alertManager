@@ -177,6 +177,11 @@ Route::get('alert/test', [
     'uses' => 'AlerttestController@tmprole'
 ]);
 
+Route::get('alert/api', [
+    'as' => 'alert/api',
+    'uses' => 'ApiController@alertapi'
+]);
+
 // End alert types added by kapil
 
 
