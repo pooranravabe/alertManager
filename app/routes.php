@@ -181,6 +181,10 @@ Route::get('alert/api', [
     'as' => 'alert/api',
     'uses' => 'ApiController@alertapi'
 ]);
+Route::get('alert/publishapi', [
+    'as' => 'alert/publishapi',
+    'uses' => 'AlertController@publishapi'
+]);
 
 // End alert types added by kapil
 

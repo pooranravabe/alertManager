@@ -80,7 +80,9 @@
                 <h3>Alert Manager</h3>
                <div class="user-link"><a class="nav-item " href="{{url('alert/allTypes')}}">Alert Types</a></div>
                <div class="user-link"><a class="nav-item " href="{{url('alertManage/viewAlertSubs')}}">Alert Manager</a></div>
-                <div class="user-link"><a class="nav-item " href="{{url('alertManage/getChannelResDetail')}}">Code For Cron job</a></div>
+                <div class="user-link"><a class="nav-item " href="{{url('alertManage/getChannelResDetail')}}">Cron job(for future purpose)</a></div>
+				<div class="user-link"><a class="nav-item " href="{{url('alert/publishapi')}}">Publish API(for future purpose)</a></div>
+				<div class="user-link"><a class="nav-item " href="{{url('alert/api')}}">Response API(for future purpose)</a></div>
                </div>
             </div>
           </li>
