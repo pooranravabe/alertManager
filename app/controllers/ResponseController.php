@@ -6,9 +6,6 @@
 class ResponseController extends BaseController {
 	public $userid;
 	public $email;
-	public $filepath ;
-	public $Folder;
-	
 	
     public function __construct() {
         $this->beforeFilter('auth');
@@ -19,13 +16,6 @@ class ResponseController extends BaseController {
 		   $tmp = DB::table('alert_admin')->select('email')->where('id','=', $this->user->id)->first();
 		   $this->email = $tmp->email;
         }
-	   
-		$this->Folder 		    = public_path().'/user/'.$this->userid;	   
-		$this->filepath 		  = $this->Folder.'/jsons/';
-		
-		$old = umask(0);
-		File::makeDirectory($this->filepath, 0755, true, true);
-		umask($old);
     }
 	
 	public function getResponse(){
@@ -57,29 +47,7 @@ class ResponseController extends BaseController {
 						$likesurl="https://graph.facebook.com/likes?id=".$responseObj."&access_token=";
                         $accessToken=(json_decode($token)->access_token);
                         $likesurl_with_token = $likesurl.$accessToken ;
-						//$context = @file_get_contents($likesurl_with_token);
-						
-						$context = '';
-						$mod_date= filemtime($this->filepath.$accessToken."likewithjson.txt");					
-						$now_date=strtotime('+1 hour');
-						if(file_exists($this->filepath.$accessToken."likewithjson.txt")) {
-							if($now_date>$mod_date) {
-								$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-								$context = @file_get_contents($likesurl_with_token);
-								fwrite($Userfile, $context);
-								fclose($Userfile);
-							} else {
-									$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "r");
-									$context = file_get_contents($Userfile);
-									fclose($Userfile);
-							}
-						} else {
-							$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-							$context = @file_get_contents($likesurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						}
-						
+						$context = @file_get_contents($likesurl_with_token);
 						//var_dump($context);
 						if($context!=FALSE){
 							$jsonlikes = file_get_contents($likesurl_with_token);
@@ -128,29 +96,9 @@ class ResponseController extends BaseController {
 						}
 						//Here get the comments
 						$commenturl="https://graph.facebook.com/".$responseObj."/comments?summary=true&access_token=";
-						$commenturl_with_token = $commenturl.$accessToken ;
-						
-						$json = '';
-						$mod_date= filemtime($this->filepath.$accessToken."graphfacebook.txt");					
-						$now_date=strtotime('+1 hour');
-						if(file_exists($this->filepath.$accessToken."graphfacebook.txt")) {
-							if($now_date>$mod_date) {
-								$Userfile = fopen($this->filepath.$accessToken."graphfacebook.txt", "w");
-								$json = @file_get_contents($commenturl_with_token);
-								fwrite($Userfile, $json);
-								fclose($Userfile);
-							} else {
-									$Userfile = fopen($this->filepath.$accessToken."graphfacebook.txt", "r");
-									$json = file_get_contents($Userfile);
-									fclose($Userfile);
-							}
-						} else {
-							$Userfile = fopen($this->filepath.$accessToken."graphfacebook.txt", "w");
-							$json = @file_get_contents($commenturl_with_token);
-							fwrite($Userfile, $json);
-							fclose($Userfile);
-						}
-						
+                        //$accessToken=(json_decode($channelInfo->auth_detail)->access_token);
+                        $commenturl_with_token = $commenturl.$accessToken ;
+                        $json = @file_get_contents($commenturl_with_token);
 						if($json!=FALSE){
 							$commentResponses=json_decode($json, true);
 							//echo "<pre>";
@@ -282,27 +230,8 @@ class ResponseController extends BaseController {
 						$token=$NetworkIds[0]['project_network_ids'][$pkey]['auth_detail'][(int)$key];
 						$urllinked="https://api.linkedin.com/v1/companies/2414183/updates/key=".$responseObj."?oauth2_access_token=";
 						$accessToken=(json_decode($token)->access_token);
-						$url_with_token = $urllinked.$accessToken."&format=json";
-						$context = '';
-					$mod_date= filemtime($this->filepath.$accessToken."linkedinjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."linkedinjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-							$context = @file_get_contents($url_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-						$context = @file_get_contents($url_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+                        $url_with_token = $urllinked.$accessToken."&format=json";
+						$context=@file_get_contents($url_with_token);
 						if($context!=FALSE){
 							$linkedinresponse = json_decode(file_get_contents($url_with_token), true);
 							$l_like+=$linkedinresponse["numLikes"];
@@ -343,28 +272,7 @@ class ResponseController extends BaseController {
 					elseif($network==5){
 						//var_dump('sumit5');
 						$responseObj = $NetworkIds[0]['project_channel_ids'][$pkey]['response'][(int)$key];
-						$gooleURL = "https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics";
-					
-					$context = '';
-					$mod_date= filemtime($this->filepath.$responseObj."googlejson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$responseObj."googlejson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-							$context = @file_get_contents($gooleURL);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-						$context = @file_get_contents($gooleURL);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+						$context=@file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics");
 						if($context!=FALSE){
 							$abc=json_decode($context,true);
 							if(count($abc['items'])>0){
@@ -552,30 +460,7 @@ class ResponseController extends BaseController {
 				$likesurl="https://graph.facebook.com/likes?id=".$responseObj."&access_token=";
 				$accessToken=(json_decode($token)->access_token);
 				$likesurl_with_token = $likesurl.$accessToken ;
-				//$context = @file_get_contents($likesurl_with_token);
-				
-				$context = '';
-					$mod_date= filemtime($this->filepath.$accessToken."likewithjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."likewithjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-							$context = @file_get_contents($likesurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-						$context = @file_get_contents($likesurl_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
-				
-				
+				$context = @file_get_contents($likesurl_with_token);
 				if($context!=FALSE){
 					$jsonlikes = file_get_contents($likesurl_with_token);
 					$likesResponses=json_decode($jsonlikes, true);
@@ -594,30 +479,7 @@ class ResponseController extends BaseController {
 				$p_id=(count($data)>1)?$data[1]:$data[0];
 				$sharedurl="https://graph.facebook.com/".$p_id."/sharedposts?access_token=";
 				$sharedurlurl_with_token = $sharedurl.$accessToken ;
-$context = '';
-					$mod_date= filemtime($accessToken."sharedpostsfacebook.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($accessToken."sharedpostsfacebook.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-							$context = @file_get_contents($sharedurlurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-						$context = @file_get_contents($sharedurlurl_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
-				
-							
-				
-				
+				$context = @file_get_contents($sharedurlurl_with_token);
 				if($context!=FALSE){
 					$jsonshares = file_get_contents($sharedurlurl_with_token);
 					$sharesResponses=json_decode($jsonshares, true);
@@ -640,29 +502,8 @@ $context = '';
 				}
 				//Here get the comments
 				$commenturl="https://graph.facebook.com/".$responseObj."/comments?summary=true&access_token=";
-					$commenturl_with_token = $commenturl.$accessToken ;
-
-					
-					$json = '';
-					$mod_date= filemtime($accessToken."commentsfacebook.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($accessToken."commentsfacebook.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($accessToken."commentsfacebook.txt", "w");
-							$json = @file_get_contents($commenturl_with_token);
-							fwrite($Userfile, $json);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($accessToken."commentsfacebook.txt", "r");
-								$json = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($accessToken."commentsfacebook.txt", "w");
-							$json = @file_get_contents($commenturl_with_token);
-						fwrite($Userfile, $json);
-						fclose($Userfile);
-					}
+				$commenturl_with_token = $commenturl.$accessToken ;
+				$json = @file_get_contents($commenturl_with_token);
 				if($json!=FALSE){
 					$commentResponses=json_decode($json, true);
 					if(count($commentResponses)>1){
@@ -781,28 +622,9 @@ $context = '';
 				$responseObj = $Contents_Text['response'];
 				$token=$Contents_Text['auth'];
 				$urllinked="https://api.linkedin.com/v1/companies/2414183/updates/key=".$responseObj."?oauth2_access_token=";
-						$accessToken=(json_decode($token)->access_token);
-						$url_with_token = $urllinked.$accessToken."&format=json";
-						$context = '';
-					$mod_date= filemtime($this->filepath.$accessToken."linkedinjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."linkedinjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-							$context = @file_get_contents($url_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-						$context = @file_get_contents($url_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+				$accessToken=(json_decode($token)->access_token);
+				$url_with_token = $urllinked.$accessToken."&format=json";
+				$context=@file_get_contents($url_with_token);
 				if($context!=FALSE){
 					//Save in DB
 					$linkedinresponse = json_decode(file_get_contents($url_with_token), true);
@@ -850,28 +672,7 @@ $context = '';
 			}
 			elseif($Contents_Text['network_id']==5){
 				$responseObj = $Contents_Text['response'];
-				$gooleURL = "https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics";
-					
-					$context = '';
-					$mod_date= filemtime($this->filepath.$responseObj."googlejson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$responseObj."googlejson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-							$context = @file_get_contents($gooleURL);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-						$context = @file_get_contents($gooleURL);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+				$context=@file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics");
 				if($context!=FALSE){
 					$abc=json_decode($context,true);
 					if(count($abc['items'])>0){
@@ -962,29 +763,7 @@ $context = '';
 				$likesurl="https://graph.facebook.com/likes?id=".$responseObj."&access_token=";
 				$accessToken=(json_decode($token)->access_token);
 				$likesurl_with_token = $likesurl.$accessToken ;
-				//$context = @file_get_contents($likesurl_with_token);
-				
-				$context = '';
-					$mod_date= filemtime($this->filepath.$accessToken."likewithjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."likewithjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-							$context = @file_get_contents($likesurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-						$context = @file_get_contents($likesurl_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
-				
+				$context = @file_get_contents($likesurl_with_token);
 				if($context!=FALSE){
 					$jsonlikes = file_get_contents($likesurl_with_token);
 					$likesResponses=json_decode($jsonlikes, true);
@@ -1003,26 +782,7 @@ $context = '';
 				$p_id=(count($data)>1)?$data[1]:$data[0];
 				$sharedurl="https://graph.facebook.com/".$p_id."/sharedposts?access_token=";
 				$sharedurlurl_with_token = $sharedurl.$accessToken ;
-$context = '';
-					$mod_date= filemtime($accessToken."sharedpostsfacebook.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($accessToken."sharedpostsfacebook.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-							$context = @file_get_contents($sharedurlurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-						$context = @file_get_contents($sharedurlurl_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+				$context = @file_get_contents($sharedurlurl_with_token);
 				if($context!=FALSE){
 					$jsonshares = file_get_contents($sharedurlurl_with_token);
 					$sharesResponses=json_decode($jsonshares, true);
@@ -1045,29 +805,8 @@ $context = '';
 				}
 				//Here get the comments
 				$commenturl="https://graph.facebook.com/".$responseObj."/comments?summary=true&access_token=";
-					$commenturl_with_token = $commenturl.$accessToken ;
-
-					
-					$json = '';
-					$mod_date= filemtime($accessToken."commentsfacebook.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($accessToken."commentsfacebook.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($accessToken."commentsfacebook.txt", "w");
-							$json = @file_get_contents($commenturl_with_token);
-							fwrite($Userfile, $json);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($accessToken."commentsfacebook.txt", "r");
-								$json = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($accessToken."commentsfacebook.txt", "w");
-							$json = @file_get_contents($commenturl_with_token);
-						fwrite($Userfile, $json);
-						fclose($Userfile);
-					}
+				$commenturl_with_token = $commenturl.$accessToken ;
+				$json = @file_get_contents($commenturl_with_token);
 				if($json!=FALSE){
 					$commentResponses=json_decode($json, true);
 					if(count($commentResponses)>1){
@@ -1125,28 +864,9 @@ $context = '';
 				$responseObj = $Contents_Text['response'];
 				$token=$Contents_Text['auth'];
 				$urllinked="https://api.linkedin.com/v1/companies/2414183/updates/key=".$responseObj."?oauth2_access_token=";
-						$accessToken=(json_decode($token)->access_token);
-						$url_with_token = $urllinked.$accessToken."&format=json";
-						$context = '';
-					$mod_date= filemtime($this->filepath.$accessToken."linkedinjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."linkedinjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-							$context = @file_get_contents($url_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-						$context = @file_get_contents($url_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+				$accessToken=(json_decode($token)->access_token);
+				$url_with_token = $urllinked.$accessToken."&format=json";
+				$context=@file_get_contents($url_with_token);
 				if($context!=FALSE){
 					$linkedinresponse = json_decode(file_get_contents($url_with_token), true);
 					$l_like+=$linkedinresponse["numLikes"];
@@ -1164,28 +884,7 @@ $context = '';
 			}
 			elseif($Contents_Text['network_id']==5){
 				$responseObj = $Contents_Text['response'];
-				$gooleURL = "https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics";
-					
-					$context = '';
-					$mod_date= filemtime($this->filepath.$responseObj."googlejson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$responseObj."googlejson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-							$context = @file_get_contents($gooleURL);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-						$context = @file_get_contents($gooleURL);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+				$context=@file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics");
 				if($context!=FALSE){
 					$abc=json_decode($context,true);
 					if(count($abc['items'])>0){
@@ -1284,30 +983,7 @@ $context = '';
 				$likesurl="https://graph.facebook.com/likes?id=".$responseObj."&access_token=";
 				$accessToken=(json_decode($token)->access_token);
 				$likesurl_with_token = $likesurl.$accessToken ;
-				//$context = @file_get_contents($likesurl_with_token);
-				
-				
-				$context = '';
-					$mod_date= filemtime($this->filepath.$accessToken."likewithjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."likewithjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-							$context = @file_get_contents($likesurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-						$context = @file_get_contents($likesurl_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
-				
+				$context = @file_get_contents($likesurl_with_token);
 				if($context!=FALSE){
 					$jsonlikes = file_get_contents($likesurl_with_token);
 					$likesResponses=json_decode($jsonlikes, true);
@@ -1325,26 +1001,7 @@ $context = '';
 				$p_id=(count($data)>1)?$data[1]:$data[0];
 				$sharedurl="https://graph.facebook.com/".$p_id."/sharedposts?access_token=";
 				$sharedurlurl_with_token = $sharedurl.$accessToken ;
-$context = '';
-					$mod_date= filemtime($accessToken."sharedpostsfacebook.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($accessToken."sharedpostsfacebook.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-							$context = @file_get_contents($sharedurlurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-						$context = @file_get_contents($sharedurlurl_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+				$context = @file_get_contents($sharedurlurl_with_token);
 				if($context!=FALSE){
 					$jsonshares = file_get_contents($sharedurlurl_with_token);
 					$sharesResponses=json_decode($jsonshares, true);
@@ -1366,29 +1023,8 @@ $context = '';
 				}
 				//Here get the comments
 				$commenturl="https://graph.facebook.com/".$responseObj."/comments?summary=true&access_token=";
-					$commenturl_with_token = $commenturl.$accessToken ;
-
-					
-					$json = '';
-					$mod_date= filemtime($accessToken."commentsfacebook.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($accessToken."commentsfacebook.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($accessToken."commentsfacebook.txt", "w");
-							$json = @file_get_contents($commenturl_with_token);
-							fwrite($Userfile, $json);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($accessToken."commentsfacebook.txt", "r");
-								$json = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($accessToken."commentsfacebook.txt", "w");
-							$json = @file_get_contents($commenturl_with_token);
-						fwrite($Userfile, $json);
-						fclose($Userfile);
-					}
+				$commenturl_with_token = $commenturl.$accessToken ;
+				$json = @file_get_contents($commenturl_with_token);
 				if($json!=FALSE){
 					$commentResponses=json_decode($json, true);
 					if(count($commentResponses)>1){
@@ -1436,28 +1072,9 @@ $context = '';
 					$responseObj = $contentId_response[1];
 					$token=$datas[0]["project_network_ids"][$pro_key]['auth_detail'][$cot_key];
 					$urllinked="https://api.linkedin.com/v1/companies/2414183/updates/key=".$responseObj."?oauth2_access_token=";
-						$accessToken=(json_decode($token)->access_token);
-						$url_with_token = $urllinked.$accessToken."&format=json";
-						$context = '';
-					$mod_date= filemtime($this->filepath.$accessToken."linkedinjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."linkedinjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-							$context = @file_get_contents($url_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-						$context = @file_get_contents($url_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+					$accessToken=(json_decode($token)->access_token);
+					$url_with_token = $urllinked.$accessToken."&format=json";
+					$context=@file_get_contents($url_with_token);
 					if($context!=FALSE){
 						$linkedinresponse = json_decode(file_get_contents($url_with_token), true);
 						$l_like+=$linkedinresponse["numLikes"];
@@ -1470,28 +1087,7 @@ $context = '';
 				}
 				elseif((int)$datas[0]["project_network_ids"][$pro_key][key($projects)][$cot_key]==5){
 					$responseObj = $contentId_response[1];
-					$gooleURL = "https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics";
-					
-					$context = '';
-					$mod_date= filemtime($this->filepath.$responseObj."googlejson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$responseObj."googlejson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-							$context = @file_get_contents($gooleURL);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-						$context = @file_get_contents($gooleURL);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+					$context=@file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics");
 					if($context!=FALSE){
 						$abc=json_decode($context,true);
 						if(count($abc['items'])>0){
@@ -1560,29 +1156,7 @@ $context = '';
 					$likesurl="https://graph.facebook.com/likes?id=".$responseObj."&access_token=";
 					$accessToken=(json_decode($token)->access_token);
 					$likesurl_with_token = $likesurl.$accessToken ;
-					//$context = @file_get_contents($likesurl_with_token);
-					
-					$context = '';
-					$mod_date= filemtime($this->filepath.$accessToken."likewithjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."likewithjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-							$context = @file_get_contents($likesurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-						$context = @file_get_contents($likesurl_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
-					
+					$context = @file_get_contents($likesurl_with_token);
 					if($context!=FALSE){
 						$jsonlikes = file_get_contents($likesurl_with_token);
 						$likesResponses=json_decode($jsonlikes, true);
@@ -1599,27 +1173,8 @@ $context = '';
 					$data=explode('_', $responseObj);
 					$p_id=(count($data)>1)?$data[1]:$data[0];
 					$sharedurl="https://graph.facebook.com/".$p_id."/sharedposts?access_token=";
-				$sharedurlurl_with_token = $sharedurl.$accessToken ;
-$context = '';
-					$mod_date= filemtime($accessToken."sharedpostsfacebook.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($accessToken."sharedpostsfacebook.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-							$context = @file_get_contents($sharedurlurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-						$context = @file_get_contents($sharedurlurl_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+					$sharedurlurl_with_token = $sharedurl.$accessToken ;
+					$context = @file_get_contents($sharedurlurl_with_token);
 					if($context!=FALSE){
 						$jsonshares = file_get_contents($sharedurlurl_with_token);
 						$sharesResponses=json_decode($jsonshares, true);
@@ -1642,28 +1197,7 @@ $context = '';
 					//Here get the comments
 					$commenturl="https://graph.facebook.com/".$responseObj."/comments?summary=true&access_token=";
 					$commenturl_with_token = $commenturl.$accessToken ;
-
-					
-					$json = '';
-					$mod_date= filemtime($accessToken."commentsfacebook.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($accessToken."commentsfacebook.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($accessToken."commentsfacebook.txt", "w");
-							$json = @file_get_contents($commenturl_with_token);
-							fwrite($Userfile, $json);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($accessToken."commentsfacebook.txt", "r");
-								$json = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($accessToken."commentsfacebook.txt", "w");
-							$json = @file_get_contents($commenturl_with_token);
-						fwrite($Userfile, $json);
-						fclose($Userfile);
-					}
+					$json = @file_get_contents($commenturl_with_token);
 					if($json!=FALSE){
 						$commentResponses=json_decode($json, true);
 						if(count($commentResponses)>1){
@@ -1727,28 +1261,9 @@ $context = '';
 					$responseObj = $contentId_response[1];
 					$token=$datas[0]["project_network_ids"][$pro_key]['auth_detail'][$cot_key];
 					$urllinked="https://api.linkedin.com/v1/companies/2414183/updates/key=".$responseObj."?oauth2_access_token=";
-						$accessToken=(json_decode($token)->access_token);
-						$url_with_token = $urllinked.$accessToken."&format=json";
-						$context = '';
-					$mod_date= filemtime($this->filepath.$accessToken."linkedinjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."linkedinjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-							$context = @file_get_contents($url_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-						$context = @file_get_contents($url_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+					$accessToken=(json_decode($token)->access_token);
+					$url_with_token = $urllinked.$accessToken."&format=json";
+					$context=@file_get_contents($url_with_token);
 					if($context!=FALSE){
 						$linkedinresponse = json_decode(file_get_contents($url_with_token), true);
 						$l_like+=$linkedinresponse["numLikes"];
@@ -1769,28 +1284,7 @@ $context = '';
 				elseif((int)$datas[0]["project_network_ids"][$pro_key][key($projects)][$cot_key]==5){
 					$y_channel_id=$contentId_response[0];
 					$responseObj = $contentId_response[1];
-					$gooleURL = "https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics";
-					
-					$context = '';
-					$mod_date= filemtime($this->filepath.$responseObj."googlejson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$responseObj."googlejson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-							$context = @file_get_contents($gooleURL);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-						$context = @file_get_contents($gooleURL);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+					$context=@file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics");
 					if($context!=FALSE){
 						$abc=json_decode($context,true);
 						if(count($abc['items'])>0){
@@ -2057,29 +1551,7 @@ $context = '';
 					$likesurl="https://graph.facebook.com/likes?id=".$responseObj."&access_token=";
 					$accessToken=(json_decode($token)->access_token);
 					$likesurl_with_token = $likesurl.$accessToken ;
-					//$context = @file_get_contents($likesurl_with_token);
-					
-					$context = '';
-					$mod_date= filemtime($this->filepath.$accessToken."likewithjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."likewithjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-							$context = @file_get_contents($likesurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-						$context = @file_get_contents($likesurl_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
-					
+					$context = @file_get_contents($likesurl_with_token);
 					if($context!=FALSE){
 						$jsonlikes = file_get_contents($likesurl_with_token);
 						$likesResponses=json_decode($jsonlikes, true);
@@ -2097,29 +1569,7 @@ $context = '';
 					$p_id=(count($data)>1)?$data[1]:$data[0];
 					$sharedurl="https://graph.facebook.com/".$p_id."/sharedposts?access_token=";
 					$sharedurlurl_with_token = $sharedurl.$accessToken ;
-					
-					$context = '';
-					$mod_date= filemtime($accessToken."sharedpostsfacebook.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($accessToken."sharedpostsfacebook.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-							$context = @file_get_contents($sharedurlurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-						$context = @file_get_contents($sharedurlurl_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
-					
-					
+					$context = @file_get_contents($sharedurlurl_with_token);
 					if($context!=FALSE){
 						$jsonshares = file_get_contents($sharedurlurl_with_token);
 						$sharesResponses=json_decode($jsonshares, true);
@@ -2142,30 +1592,7 @@ $context = '';
 					//Here get the comments
 					$commenturl="https://graph.facebook.com/".$responseObj."/comments?summary=true&access_token=";
 					$commenturl_with_token = $commenturl.$accessToken ;
-					
-					$json = '';
-					$mod_date= filemtime($accessToken."commentsfacebookjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($accessToken."commentsfacebookjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($accessToken."commentsfacebookjson.txt", "w");
-							$json = @file_get_contents($commenturl_with_token);
-							fwrite($Userfile, $json);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($accessToken."commentsfacebookjson.txt", "r");
-								$json = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($accessToken."commentsfacebookjson.txt", "w");
-						$json = @file_get_contents($commenturl_with_token);
-						fwrite($Userfile, $json);
-						fclose($Userfile);
-					}
-					
-					
-					
+					$json = @file_get_contents($commenturl_with_token);
 					if($json!=FALSE){
 						$commentResponses=json_decode($json, true);
 						if(count($commentResponses)>1){
@@ -2224,33 +1651,7 @@ $context = '';
 					$urllinked="https://api.linkedin.com/v1/companies/2414183/updates/key=".$responseObj."?oauth2_access_token=";
 					$accessToken=(json_decode($token)->access_token);
 					$url_with_token = $urllinked.$accessToken."&format=json";
-					
-					
-					
-					$context = '';
-					$mod_date= filemtime($this->filepath.$accessToken."linkedinjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."linkedinjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-							$context = @file_get_contents($url_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-						$context = @file_get_contents($url_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
-					
-					
-					
-					
+					$context=@file_get_contents($url_with_token);
 					if($context!=FALSE){
 						$linkedinresponse = json_decode(file_get_contents($url_with_token), true);
 						$c_like+=$linkedinresponse["numLikes"];
@@ -2264,55 +1665,7 @@ $context = '';
 				}
 				elseif($channel_detail->network_id==5){
 					$responseObj = $contentId_response[1];
-					
-					$gooleURL = "https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics";
-					
-					$context = '';
-					$mod_date= filemtime($this->filepath.$responseObj."googlejson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$responseObj."googlejson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-							$context = @file_get_contents($gooleURL);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-						$context = @file_get_contents($gooleURL);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
-					
-					
-					//$gooleURL = "https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics";
-					
-					$context = '';
-					$mod_date= filemtime($this->filepath.$responseObj."googlejson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$responseObj."googlejson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-							$context = @file_get_contents($gooleURL);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-						$context = @file_get_contents($gooleURL);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
-					
-					
+					$context=@file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics");
 					if($context!=FALSE){
 						$abc=json_decode($context,true);
 						if(count($abc['items'])>0){
@@ -2591,30 +1944,7 @@ $context = '';
 					$likesurl="https://graph.facebook.com/likes?id=".$responseObj."&access_token=";
 					$accessToken=(json_decode($token)->access_token);
 					$likesurl_with_token = $likesurl.$accessToken ;
-					//$context = @file_get_contents($likesurl_with_token);
-					$context = '';
-					$mod_date= filemtime($this->filepath.$accessToken."likewithjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."likewithjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-							$context = @file_get_contents($likesurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-						$context = @file_get_contents($likesurl_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
-					
-					
-					
+					$context = @file_get_contents($likesurl_with_token);
 					if($context!=FALSE){
 						$jsonlikes = file_get_contents($likesurl_with_token);
 						$likesResponses=json_decode($jsonlikes, true);
@@ -2631,27 +1961,8 @@ $context = '';
 					$data=explode('_', $responseObj);
 					$p_id=(count($data)>1)?$data[1]:$data[0];
 					$sharedurl="https://graph.facebook.com/".$p_id."/sharedposts?access_token=";
-				$sharedurlurl_with_token = $sharedurl.$accessToken ;
-$context = '';
-					$mod_date= filemtime($accessToken."sharedpostsfacebook.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($accessToken."sharedpostsfacebook.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-							$context = @file_get_contents($sharedurlurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-						$context = @file_get_contents($sharedurlurl_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+					$sharedurlurl_with_token = $sharedurl.$accessToken ;
+					$context = @file_get_contents($sharedurlurl_with_token);
 					if($context!=FALSE){
 						$jsonshares = file_get_contents($sharedurlurl_with_token);
 						$sharesResponses=json_decode($jsonshares, true);
@@ -2674,28 +1985,7 @@ $context = '';
 					//Here get the comments
 					$commenturl="https://graph.facebook.com/".$responseObj."/comments?summary=true&access_token=";
 					$commenturl_with_token = $commenturl.$accessToken ;
-
-					
-					$json = '';
-					$mod_date= filemtime($accessToken."commentsfacebook.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($accessToken."commentsfacebook.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($accessToken."commentsfacebook.txt", "w");
-							$json = @file_get_contents($commenturl_with_token);
-							fwrite($Userfile, $json);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($accessToken."commentsfacebook.txt", "r");
-								$json = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($accessToken."commentsfacebook.txt", "w");
-							$json = @file_get_contents($commenturl_with_token);
-						fwrite($Userfile, $json);
-						fclose($Userfile);
-					}
+					$json = @file_get_contents($commenturl_with_token);
 					if($json!=FALSE){
 						$commentResponses=json_decode($json, true);
 						if(count($commentResponses)>1){
@@ -2775,28 +2065,9 @@ $context = '';
 					$responseObj = $contentId_response[1];
 					$token=$datas[0]["project_network_ids"][$pro_key]['auth_detail'][$cot_key];
 					$urllinked="https://api.linkedin.com/v1/companies/2414183/updates/key=".$responseObj."?oauth2_access_token=";
-						$accessToken=(json_decode($token)->access_token);
-						$url_with_token = $urllinked.$accessToken."&format=json";
-						$context = '';
-					$mod_date= filemtime($this->filepath.$accessToken."linkedinjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."linkedinjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-							$context = @file_get_contents($url_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-						$context = @file_get_contents($url_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+					$accessToken=(json_decode($token)->access_token);
+					$url_with_token = $urllinked.$accessToken."&format=json";
+					$context=@file_get_contents($url_with_token);
 					if($context!=FALSE){
 						$linkedinresponse = json_decode(file_get_contents($url_with_token), true);
 						//echo"<pre>";var_dump($linkedinresponse['updateContent']["person"]["pictureUrl"]);exit;
@@ -2825,28 +2096,7 @@ $context = '';
 					$y_views_count=0;
 					$y_channel_id=$contentId_response[0];
 					$responseObj = $contentId_response[1];
-					$gooleURL = "https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics";
-					
-					$context = '';
-					$mod_date= filemtime($this->filepath.$responseObj."googlejson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$responseObj."googlejson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-							$context = @file_get_contents($gooleURL);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-						$context = @file_get_contents($gooleURL);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+					$context=@file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics");
 					if($context!=FALSE){
 						$abc=json_decode($context,true);
 						if(count($abc['items'])>0){
@@ -2978,29 +2228,7 @@ $context = '';
 					$likesurl="https://graph.facebook.com/likes?id=".$responseObj."&access_token=";
 					$accessToken=(json_decode($token)->access_token);
 					$likesurl_with_token = $likesurl.$accessToken ;
-					//$context = @file_get_contents($likesurl_with_token);
-					
-					$context = '';
-					$mod_date= filemtime($this->filepath.$accessToken."likewithjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."likewithjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-							$context = @file_get_contents($likesurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-						$context = @file_get_contents($likesurl_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
-					
+					$context = @file_get_contents($likesurl_with_token);
 					if($context!=FALSE){
 						$jsonlikes = file_get_contents($likesurl_with_token);
 						$likesResponses=json_decode($jsonlikes, true);
@@ -3017,27 +2245,8 @@ $context = '';
 					$data=explode('_', $responseObj);
 					$p_id=(count($data)>1)?$data[1]:$data[0];
 					$sharedurl="https://graph.facebook.com/".$p_id."/sharedposts?access_token=";
-				$sharedurlurl_with_token = $sharedurl.$accessToken ;
-$context = '';
-					$mod_date= filemtime($accessToken."sharedpostsfacebook.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($accessToken."sharedpostsfacebook.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-							$context = @file_get_contents($sharedurlurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-						$context = @file_get_contents($sharedurlurl_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+					$sharedurlurl_with_token = $sharedurl.$accessToken ;
+					$context = @file_get_contents($sharedurlurl_with_token);
 					if($context!=FALSE){
 						$jsonshares = file_get_contents($sharedurlurl_with_token);
 						$sharesResponses=json_decode($jsonshares, true);
@@ -3060,28 +2269,7 @@ $context = '';
 					//Here get the comments
 					$commenturl="https://graph.facebook.com/".$responseObj."/comments?summary=true&access_token=";
 					$commenturl_with_token = $commenturl.$accessToken ;
-
-					
-					$json = '';
-					$mod_date= filemtime($this->filepath.$accessToken."graphfacebook.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."graphfacebook.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."graphfacebook.txt", "w");
-							$json = @file_get_contents($commenturl_with_token);
-							fwrite($Userfile, $json);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."graphfacebook.txt", "r");
-								$json = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."graphfacebook.txt", "w");
-							$json = @file_get_contents($commenturl_with_token);
-						fwrite($Userfile, $json);
-						fclose($Userfile);
-					}
+					$json = @file_get_contents($commenturl_with_token);
 					if($json!=FALSE){
 						$commentResponses=json_decode($json, true);
 						if(count($commentResponses)>1){
@@ -3161,28 +2349,9 @@ $context = '';
 					$responseObj = $contentId_response[1];
 					$token=$datas[0]["project_network_ids"][$pro_key]['auth_detail'][$cot_key];
 					$urllinked="https://api.linkedin.com/v1/companies/2414183/updates/key=".$responseObj."?oauth2_access_token=";
-						$accessToken=(json_decode($token)->access_token);
-						$url_with_token = $urllinked.$accessToken."&format=json";
-						$context = '';
-					$mod_date= filemtime($this->filepath.$accessToken."linkedinjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."linkedinjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-							$context = @file_get_contents($url_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-						$context = @file_get_contents($url_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+					$accessToken=(json_decode($token)->access_token);
+					$url_with_token = $urllinked.$accessToken."&format=json";
+					$context=@file_get_contents($url_with_token);
 					if($context!=FALSE){
 						$linkedinresponse = json_decode(file_get_contents($url_with_token), true);
 						//echo"<pre>";var_dump($linkedinresponse['updateContent']["person"]["pictureUrl"]);exit;
@@ -3209,28 +2378,7 @@ $context = '';
 					$picUrl = '';
 					$y_channel_id=$contentId_response[0];
 					$responseObj = $contentId_response[1];
-					$gooleURL = "https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics";
-					
-					$context = '';
-					$mod_date= filemtime($this->filepath.$responseObj."googlejson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$responseObj."googlejson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-							$context = @file_get_contents($gooleURL);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-						$context = @file_get_contents($gooleURL);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+					$context=@file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics");
 					if($context!=FALSE){
 						$abc=json_decode($context,true);
 						if(count($abc['items'])>0){
@@ -3461,27 +2609,8 @@ $context = '';
 									$data=explode('_', $content_resId->response);
 									$p_id=(count($data)>1)?$data[1]:$data[0];
 									$sharedurl="https://graph.facebook.com/".$p_id."/sharedposts?access_token=";
-				$sharedurlurl_with_token = $sharedurl.$accessToken ;
-$context = '';
-					$mod_date= filemtime($accessToken."sharedpostsfacebook.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($accessToken."sharedpostsfacebook.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-							$context = @file_get_contents($sharedurlurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-						$context = @file_get_contents($sharedurlurl_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+									$sharedurlurl_with_token = $sharedurl.$accessToken ;
+									$context = @file_get_contents($sharedurlurl_with_token);
 									if($context!=FALSE){
 										$jsonshares = file_get_contents($sharedurlurl_with_token);
 										$sharesResponses=json_decode($jsonshares, true);
@@ -3775,29 +2904,7 @@ $context = '';
 					$likesurl="https://graph.facebook.com/likes?id=".$responseObj."&access_token=";
 					$accessToken=(json_decode($token)->access_token);
 					$likesurl_with_token = $likesurl.$accessToken ;
-					//$context = @file_get_contents($likesurl_with_token);
-					
-					$context = '';
-					$mod_date= filemtime($this->filepath.$accessToken."likewithjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."likewithjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-							$context = @file_get_contents($likesurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."likewithjson.txt", "w");
-						$context = @file_get_contents($likesurl_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
-					
+					$context = @file_get_contents($likesurl_with_token);
 					if($context!=FALSE){
 						$jsonlikes = file_get_contents($likesurl_with_token);
 						$likesResponses=json_decode($jsonlikes, true);
@@ -3814,27 +2921,8 @@ $context = '';
 					$data=explode('_', $responseObj);
 					$p_id=(count($data)>1)?$data[1]:$data[0];
 					$sharedurl="https://graph.facebook.com/".$p_id."/sharedposts?access_token=";
-				$sharedurlurl_with_token = $sharedurl.$accessToken ;
-$context = '';
-					$mod_date= filemtime($accessToken."sharedpostsfacebook.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($accessToken."sharedpostsfacebook.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-							$context = @file_get_contents($sharedurlurl_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($accessToken."sharedpostsfacebook.txt", "w");
-						$context = @file_get_contents($sharedurlurl_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+					$sharedurlurl_with_token = $sharedurl.$accessToken ;
+					$context = @file_get_contents($sharedurlurl_with_token);
 					if($context!=FALSE){
 						$jsonshares = file_get_contents($sharedurlurl_with_token);
 						$sharesResponses=json_decode($jsonshares, true);
@@ -3857,28 +2945,7 @@ $context = '';
 					//Here get the comments
 					$commenturl="https://graph.facebook.com/".$responseObj."/comments?summary=true&access_token=";
 					$commenturl_with_token = $commenturl.$accessToken ;
-
-					
-					$json = '';
-					$mod_date= filemtime($this->filepath.$accessToken."graphfacebook.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."graphfacebook.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."graphfacebook.txt", "w");
-							$json = @file_get_contents($commenturl_with_token);
-							fwrite($Userfile, $json);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."graphfacebook.txt", "r");
-								$json = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."graphfacebook.txt", "w");
-							$json = @file_get_contents($commenturl_with_token);
-						fwrite($Userfile, $json);
-						fclose($Userfile);
-					}
+					$json = @file_get_contents($commenturl_with_token);
 					if($json!=FALSE){
 						$commentResponses=json_decode($json, true);
 						if(count($commentResponses)>1){
@@ -3942,28 +3009,9 @@ $context = '';
 					$responseObj = $contentId_response[1];
 					$token=$datas[0]["project_network_ids"][$pro_key]['auth_detail'][$cot_key];
 					$urllinked="https://api.linkedin.com/v1/companies/2414183/updates/key=".$responseObj."?oauth2_access_token=";
-						$accessToken=(json_decode($token)->access_token);
-						$url_with_token = $urllinked.$accessToken."&format=json";
-						$context = '';
-					$mod_date= filemtime($this->filepath.$accessToken."linkedinjson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$accessToken."linkedinjson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-							$context = @file_get_contents($url_with_token);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$accessToken."linkedinjson.txt", "w");
-						$context = @file_get_contents($url_with_token);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+					$accessToken=(json_decode($token)->access_token);
+					$url_with_token = $urllinked.$accessToken."&format=json";
+					$context=@file_get_contents($url_with_token);
 					if($context!=FALSE){
 						$linkedinresponse = json_decode(file_get_contents($url_with_token), true);
 						$l_like+=$linkedinresponse["numLikes"];
@@ -3984,28 +3032,7 @@ $context = '';
 				elseif((int)$datas[0]["project_network_ids"][$pro_key][key($projects)][$cot_key]==5){
 					$y_channel_id=$contentId_response[0];
 					$responseObj = $contentId_response[1];
-					$gooleURL = "https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics";
-					
-					$context = '';
-					$mod_date= filemtime($this->filepath.$responseObj."googlejson.txt");					
-					$now_date=strtotime('+1 hour');
-					if(file_exists($this->filepath.$responseObj."googlejson.txt")) {
-						if($now_date>$mod_date) {
-							$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-							$context = @file_get_contents($gooleURL);
-							fwrite($Userfile, $context);
-							fclose($Userfile);
-						} else {
-								$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "r");
-								$context = file_get_contents($Userfile);
-								fclose($Userfile);
-						}
-					} else {
-						$Userfile = fopen($this->filepath.$responseObj."googlejson.txt", "w");
-						$context = @file_get_contents($gooleURL);
-						fwrite($Userfile, $context);
-						fclose($Userfile);
-					}
+					$context=@file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=".$responseObj."&key=AIzaSyDwlUHX89WFsnePZN8UZ1ZmDOXFKvOLNyA&fields=items(id,snippet(channelId,title,categoryId),statistics)&part=snippet,statistics");
 					if($context!=FALSE){
 						$abc=json_decode($context,true);
 						if(count($abc['items'])>0){
