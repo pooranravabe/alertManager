@@ -15,7 +15,7 @@ class AlertTypes extends Eloquent {
 				}
 				
 				public static function getAlertSubTypes($id){ 
-					$alert_sub_type = AlertTypes::where('parent_id', $id)->select('id', 'type','module_id','module_sub_id','message','color_code','range_from_status','range_to_status','range_from','range_to')->get()->toArray();
+					$alert_sub_type = AlertTypes::where('parent_id', $id)->select('id', 'type','module_id','module_sub_id','message','color_code','range_from_status','range_to_status','range_from','range_to','subscription_id','subscription_role')->get()->toArray();
 					$arr = array();
 					if($alert_sub_type > 0){
 						foreach($alert_sub_type as $key=>$val){
@@ -29,6 +29,8 @@ class AlertTypes extends Eloquent {
 							$arr[$key]['range_from'] = $val['range_from'];
 							$arr[$key]['range_to_status'] = $val['range_to_status'];
 							$arr[$key]['range_to'] = $val['range_to'];
+							$arr[$key]['subscription_id'] = $val['subscription_id'];
+							$arr[$key]['subscription_role'] = $val['subscription_role'];
 							if($val['module_id'] > 0){
 								$modules = DB::table('role_categories')->select('category')->where("id", "=",$val['module_id'])->first();
 								$arr[$key]['module_name'] = 	$modules->category;

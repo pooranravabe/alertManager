@@ -19,12 +19,6 @@ class AlertsubscriptionController extends BaseController {
 	//author:@krrish
 	//UpdatedAt:24/02/2016
 	public function addAlertSubs(){
-	  $test = alertPermission::tmprole();
-		//$val=$test::tmprole();
-		
-		
-		//print_r($test);
-		//die;
 		$roles = PermissionsRoles::get();
 		$categories = DB::table('role_categories')->select('id','category')->get();
 		//$permissions = DB::table('permissions_sets')->select('id','cid','rid','mid','pread','pwrite', 'pupdate', 'pdelete')->get();
@@ -142,6 +136,7 @@ class AlertsubscriptionController extends BaseController {
 				$modules[$cat->id]['module'] = $modobj;						
 			}
 		}
+		
 		
 		
 		$data = array('roles'=>$roles, 'categories'  =>$categories, 'modules'  =>$modules, 'title_name'=>$title_name, 'title_id'=>$title_id, 'title_role'=>$title_role, 'title_info'=>$cboxinfo);	
