@@ -104,7 +104,7 @@ Route::post('alertManage/updateAlertSubs', [
     'as' => 'alertManage/updateAlertSubs',
     'uses' => 'AlertsubscriptionController@updateAlertSubs'
 ]);
-Route::get('alertManage/getChannelResDetail', [
+Route::get('alertManage/getChannelResDetail/', [
     'as' => 'alertManage/getChannelResDetail',
     'uses' => 'ResponseController@getChannelResDetail'
 ]);
